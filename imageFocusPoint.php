@@ -35,13 +35,22 @@ function ifp_attachment_fields_to_edit ($actions, $post) {
 
 	$a = array();
 
-	$ifp = get_post_meta($post->ID, '_wp_attachment_image_focus_point');
-	if (empty($ifp)) $ifp = array('');
+	$ifp = get_post_meta($post->ID, '_wp_attachment_image_focus_point', true);
+	if (empty($ifp)) {
+		// Default values;
+		$ifp = array(
+			'x' => 0.5,
+			'y' => 0.5,
+		);
+	}
 
 	$a['label'] = __('Image focus point');
 	$a['input'] = 'html';
-	$a['html'] = "<input type='text' value='" . $ifp[0]['x'] . "' name='attachments[" . intval($post->ID) . "][image_focus_point][x]' id='image_focus_point_x' /><input type='text' value='" . $ifp[0]['y'] . "' name='attachments[" . intval($post->ID) . "][image_focus_point][y]' id='image_focus_point_y' /><br /><script type='text/javascript'>image_focus_point(" . intval($post->ID) .")</script>";
-	$a['value'] = $ifp[0];
+	$a['html'] = "<input type='text' value='" . $ifp['x'] . "' name='attachments[" . intval($post->ID) . "][image_focus_point][x]' id='image_focus_point_" .  intval($post->ID) . "_x' />"
+	           . "<input type='text' value='" . $ifp['y'] . "' name='attachments[" . intval($post->ID) . "][image_focus_point][y]' id='image_focus_point_" .  intval($post->ID) . "_y' /><br />"
+	           . "<script type='text/javascript'>ifp_set_point(" . intval($post->ID) .")</script>"
+	           . "";
+	$a['value'] = $ifp;
 
 	$actions['image_focus_point'] = $a;
 
