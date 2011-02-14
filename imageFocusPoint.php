@@ -62,13 +62,14 @@ function ifp_attachment_fields_to_save ($post, $attachment) {
 	if ( substr($post['post_mime_type'], 0, 5) != 'image' ) return $post;
 
 	$previous = get_post_meta($post['ID'], '_wp_attachment_image_focus_point', true);
+	if (empty($previous)) $previous = array();
 
 	$changes = array_diff_assoc($attachment['image_focus_point'], $previous);
 
 	if (!empty($changes)) {
 		update_post_meta( $post['ID'], '_wp_attachment_image_focus_point', $attachment['image_focus_point']);
 		$fullsizepath = get_attached_file( $post['ID'] );
-	
+
 		// The following will regenerate the thumbnails
 		$metadata = wp_generate_attachment_metadata( $post['ID'], $fullsizepath );
 		wp_update_attachment_metadata( $post['ID'], $metadata );
@@ -81,60 +82,106 @@ function ifp_crop ($metadata, $id) {
 	global $_wp_additional_image_sizes;
 	$imgSizes = $_wp_additional_image_sizes;
 	//print_r($metadata);
-	
+
 	$orig_h = $metadata['height'];
 	$orig_w = $metadata['width'];
-	
+
 	// The $ifp contains our focus point, it is thought to be in the
 	// middle of the thumbnail
 	$ifp = get_post_meta($id, '_wp_attachment_image_focus_point', true);
-	
+
 	if (!isset($ifp['x'])) return $metadata;
-	
+
 	$file = get_attached_file( $id );
-	
+
+	if (empty($file)) return $metadata;
+
 	foreach (get_intermediate_image_sizes() as $s) {
 		if (isset($imgSizes[$s]) && ($imgSizes[$s]['crop'] == true)) {
-			
+
 			$dst_h = $imgSizes[$s]['height'];
 			$dst_w = $imgSizes[$s]['width'];
-			
+
 			$origRatio = $orig_h / $orig_w;
 			$dstRatio = $dst_h / $dst_w;
-			
+
 			$orig_x = 0;
 			$orig_y = 0;
-			
+
 			if ($dstRatio > $origRatio) {
 				// We need to operate in the original image's width
-				
+
 				$height = $orig_h;
 				$width = (int) round($orig_w * $origRatio / $dstRatio);
-				
-				$orig_x = (int) round($ifp['x'] * ($orig_w - $width));
+
+				$px = $ifp['x'] * $orig_w;
+
+				// Coordinates where the cropping is supposed to take place.
+				// It is based around that the image focus point is the center of a box (any)
+				// only restricted by the borders of the original image.
+				if ($px < $width/2) {
+					$orig_x = 0;
+				} else if ($px > ($orig_w - $width/2)) {
+					$orig_x = $orig_w - $width;
+				} else {
+					$orig_x = $px - $width/2;
+				}
 			} else if ($dstRatio < $origRatio) {
 				// We need to operate on the original image's height
-				
+
 				$width = $orig_w;
 				$height = (int) round($orig_h * $dstRatio / $origRatio);
-				
-				$orig_y = (int) round($ifp['y'] * ($orig_h - $height));
+
+				$py = $ifp['y'] * $orig_h;
+
+				// Coordinates where the cropping is supposed to take place.
+				// It is based around that the image focus point is the center of a box (any)
+				// only restricted by the borders of the original image.
+				if ($py < $height/2) {
+					$orig_y = 0;
+				} else if ($py > ($orig_h - $height/2)) {
+					$orig_y = $orig_h - $height;
+				} else {
+					$orig_y = $py - $height/2;
+				}
 			}
-			
+
 			if ($dstRatio != $origRatio) {
 				// No need to resize if ratios are the same
-				
-				$destfilename = str_replace(basename($file), $metadata['sizes'][$s]['file'], $file);
-				
+
+				$metadata['sizes'][$s]['height'] = $dst_h;
+				$metadata['sizes'][$s]['width'] = $dst_w;
+
+				if (isset($metadata['sizes'][$s]['file'])) {
+					// No need to litter the upload directory with unused thumbnails
+					$previousGeneratedFile = str_replace(basename($file), $metadata['sizes'][$s]['file'], $file);
+					if (file_exists($previousGeneratedFile)) {
+						unlink($previousGeneratedFile);
+					}
+
+					// Construct a name for the thumbnail
+					$newfilename = explode('-', $metadata['sizes'][$s]['file']);
+
+					// wp_crop_image produces only jpeg.
+					$newfilename[count($newfilename) - 1] = "{$dst_w}x{$dst_h}.jpg";
+					$metadata['sizes'][$s]['file'] = implode('-', $newfilename);
+
+					$destfilename = str_replace(basename($file), $metadata['sizes'][$s]['file'], $file);
+				} else {
+					// Must construct a name for the thumbnail
+					$destfilename = substr($file, 0, strrpos($file, '.'));
+					$destfilename .= "-{$dst_w}x{$dst_h}.jpg";
+				}
+
 				$resized = wp_crop_image($file, $orig_x, $orig_y, $width, $height, $dst_w, $dst_h, false, $destfilename);
-				
-				if ($resized == false) { // Something went wrong
-				
+
+				if ($resized) {
+					$metadata['sizes'][$s]['file'] = basename(str_replace(dirname($file), '', $resized));
 				}
 			}
 		}
 	}
-	
+
 	return $metadata;
 }
 
