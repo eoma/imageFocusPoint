@@ -16,25 +16,33 @@ function ifp_set_visual_point (attachment_id) {
 		.append("<img id='image_focus_point_poi' src='../wp-content/plugins/imageFocusPoint/poi.png' style='display:none;' height='16' width='16' />");
 		
 		poi = jQuery('#image_focus_point_poi');
+		poi.css('display', 'block');
+		poi.css('position', 'absolute');
 	}
 	
 	var img = jQuery('#image-preview-' + attachment_id);
 
-	poi.css('display', 'block');
-	poi.css('position', 'absolute');
 	poi.css('zIndex', img.css('zIndex') + 1);
 
-	var _top = img.offset().top + y * img.height() - (poi.height() /2);// - poi.offset().top;
-	var _left = img.offset().left + x * img.width() - (poi.width() / 2);// - poi.offset().left;
-	
+	var _top = img.offset().top + y * img.height() - (poi.height() / 2);
+	var _left = img.offset().left + x * img.width() - (poi.width() / 2);
+
 	poi.offset({top: _top, left: _left});
 
-	//alert(poi.offset().top + ' ' + poi.offset().left);
+	// For some reason, the element will not be positioned until
+	// the second call to poi.offset()
+	if ( typeof(this.called) == 'undefined' ) {
+		poi.offset({top: _top, left: _left});
+		this.called = true;
+	}
 }
 
 function ifp_set_point (attachment_id) {
 	jQuery(document).ready(function(){
-		jQuery('#image-preview-' + attachment_id).load( function(e) {
+
+		jQuery('#image-preview-' + attachment_id).live('mouseenter', function(e) {
+			// This is an ugly hack to be able to see the focus point when
+			// the picture is loaded. The event load does not trigger.
 			ifp_set_visual_point(attachment_id);
 		});
 
