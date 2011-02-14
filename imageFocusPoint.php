@@ -44,10 +44,10 @@ function ifp_attachment_fields_to_edit ($actions, $post) {
 		);
 	}
 
-	$a['label'] = __('Image focus point');
+	$a['label'] = __('Image focus point (relative coordinates)');
 	$a['input'] = 'html';
-	$a['html'] = "<input type='text' value='" . $ifp['x'] . "' name='attachments[" . intval($post->ID) . "][image_focus_point][x]' id='image_focus_point_" .  intval($post->ID) . "_x' />"
-	           . "<input type='text' value='" . $ifp['y'] . "' name='attachments[" . intval($post->ID) . "][image_focus_point][y]' id='image_focus_point_" .  intval($post->ID) . "_y' /><br />"
+	$a['html'] = "<input type='text' value='" . $ifp['x'] . "' name='attachments[" . intval($post->ID) . "][image_focus_point][x]' id='image_focus_point_" .  intval($post->ID) . "_x' /><br />"
+	           . "<input type='text' value='" . $ifp['y'] . "' name='attachments[" . intval($post->ID) . "][image_focus_point][y]' id='image_focus_point_" .  intval($post->ID) . "_y' />"
 	           . "<script type='text/javascript'>ifp_set_point(" . intval($post->ID) .")</script>"
 	           . "";
 	$a['value'] = $ifp;
