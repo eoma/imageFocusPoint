@@ -23,6 +23,6 @@ in the following picture
 
 The indicator will not be shown until you let your mouse pointer hover over the image.
 
-![Focus point indicator](blob/master/poi.png?raw=true)
+![Focus point indicator](imageFocusPoint/blob/master/poi.png?raw=true)
 
 
