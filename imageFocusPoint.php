@@ -97,10 +97,22 @@ function ifp_crop ($metadata, $id) {
 	if (empty($file)) return $metadata;
 
 	foreach (get_intermediate_image_sizes() as $s) {
-		if (isset($imgSizes[$s]) && ($imgSizes[$s]['crop'] == true)) {
 
-			$dst_h = $imgSizes[$s]['height'];
-			$dst_w = $imgSizes[$s]['width'];
+		$size = array();
+
+		if ( ! isset($imgSizes[$s]) ) {
+			$size = array( 'width' => '', 'height' => '', 'crop' => FALSE );
+			$size['width'] = intval(get_option( "{$s}_size_w" )); // For default sizes set in options
+			$size['height'] = intval(get_option( "{$s}_size_h" )); // For default sizes set in options
+			$size['crop'] = intval(get_option( "{$s}_crop" )); // For default sizes set in options
+		} else {
+			$size = $imgSizes[$s];
+		}
+
+		if ( !empty($size['width']) && !empty($size['height']) && isset($size['crop']) && ($size['crop'] == true) ) {
+
+			$dst_h = $size['height'];
+			$dst_w = $size['width'];
 
 			$origRatio = $orig_h / $orig_w;
 			$dstRatio = $dst_h / $dst_w;
