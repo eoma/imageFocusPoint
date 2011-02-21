@@ -11,3 +11,18 @@ Installation
 ------------
 
 As all other wordpress plugins, upload the folder to your wordpress installation's wp-content/plugins. Then go to the plugin page and activate Image Focus Point.
+
+Usage
+-----
+
+After activation, go to the media library and pick an image you will
+change the focus point. Press the "Edit image" button and click on the picture where you want the focus point.
+
+When you click on the image you see an focus point indicator that looks like
+in the following picture
+
+The indicator will not be shown until you let your mouse pointer hover over the image.
+
+![Focus point indicator](poi.png)
+
+
