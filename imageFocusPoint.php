@@ -128,7 +128,7 @@ function ifp_crop ($metadata, $id) {
 
 				$px = $ifp['x'] * $orig_w;
 
-				// Coordinates where the cropping is supposed to take place.
+				// $orig_x and $orig_y are the coordinates where the cropping is supposed to take place.
 				// It is based around that the image focus point is the center of a box (any)
 				// only restricted by the borders of the original image.
 				if ($px < $width/2) {
@@ -146,7 +146,7 @@ function ifp_crop ($metadata, $id) {
 
 				$py = $ifp['y'] * $orig_h;
 
-				// Coordinates where the cropping is supposed to take place.
+				// $orig_x and $orig_y are the coordinates where the cropping is supposed to take place.
 				// It is based around that the image focus point is the center of a box (any)
 				// only restricted by the borders of the original image.
 				if ($py < $height/2) {
