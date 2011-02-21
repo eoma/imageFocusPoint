@@ -14,7 +14,7 @@
    height="64px"
    id="svg2985"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.1 r9760"
    sodipodi:docname="poi.svg"
    inkscape:export-filename="/home/endre/.gvfs/sftp som eoma på pompel.kvarteret.no/data/www/et.kvarteret.no/endre/wordpress/wp-content/plugins/imageFocusPoint/poi.png"
    inkscape:export-xdpi="22.5"
@@ -26,11 +26,27 @@
       <stop
          id="stop3778"
          offset="0"
+         style="stop-color:#000000;stop-opacity:1;" />
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0.1"
+         id="stop3819" />
+      <stop
+         style="stop-color:#ff0000;stop-opacity:0;"
+         offset="0.15000001"
+         id="stop3780" />
+      <stop
+         id="stop3759"
+         offset="0.64999998"
+         style="stop-color:#ff0000;stop-opacity:0;" />
+      <stop
+         id="stop3821"
+         offset="0.69999999"
          style="stop-color:#ff0000;stop-opacity:1;" />
       <stop
-         style="stop-color:#ff0000;stop-opacity:0.64779872;"
-         offset="0.796875"
-         id="stop3780" />
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0.85000002"
+         id="stop3761" />
       <stop
          style="stop-color:#ff0000;stop-opacity:0;"
          offset="1"
@@ -82,7 +98,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -98,6 +114,9 @@
        sodipodi:cy="32"
        sodipodi:rx="32"
        sodipodi:ry="32"
-       d="M 64,32 A 32,32 0 1 1 0,32 32,32 0 1 1 64,32 z" />
+       d="M 64,32 A 32,32 0 1 1 0,32 32,32 0 1 1 64,32 z"
+       inkscape:export-filename="/home/endre/.gvfs/sftp som eoma på pompel.kvarteret.no/data/www/et.kvarteret.no/endre/wordpress/wp-content/plugins/imageFocusPoint/poi.png"
+       inkscape:export-xdpi="22.5"
+       inkscape:export-ydpi="22.5" />
   </g>
 </svg>
