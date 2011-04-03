@@ -57,6 +57,9 @@ function ifp_attachment_fields_to_edit ($actions, $post) {
 	return $actions;
 }
 
+/**
+ * Saves the focus point data
+ **/
 function ifp_attachment_fields_to_save ($post, $attachment) {
 
 	if ( substr($post['post_mime_type'], 0, 5) != 'image' ) return $post;
@@ -78,6 +81,9 @@ function ifp_attachment_fields_to_save ($post, $attachment) {
 	return $post;
 }
 
+/**
+ * Will perform the cropping of the image
+ */
 function ifp_crop ($metadata, $id) {
 	global $_wp_additional_image_sizes;
 	$imgSizes = $_wp_additional_image_sizes;
@@ -95,6 +101,11 @@ function ifp_crop ($metadata, $id) {
 	$file = get_attached_file( $id );
 
 	if (empty($file)) return $metadata;
+	
+	$info = pathinfo($file);
+	$dir = $info['dirname'];
+	$ext = $info['extension'];
+	$name = wp_basename($file, ".$ext");
 
 	foreach (get_intermediate_image_sizes() as $s) {
 
@@ -159,7 +170,7 @@ function ifp_crop ($metadata, $id) {
 			}
 
 			if ($dstRatio != $origRatio) {
-				// No need to resize if ratios are the same
+				// No need to resize and crop if ratios are the same
 
 				$metadata['sizes'][$s]['height'] = $dst_h;
 				$metadata['sizes'][$s]['width'] = $dst_w;
@@ -174,18 +185,17 @@ function ifp_crop ($metadata, $id) {
 					// Construct a name for the thumbnail
 					$newfilename = explode('-', $metadata['sizes'][$s]['file']);
 
-					// wp_crop_image produces only jpeg.
-					$newfilename[count($newfilename) - 1] = "{$dst_w}x{$dst_h}.jpg";
+					$newfilename[count($newfilename) - 1] = "{$dst_w}x{$dst_h}.{$ext}";
 					$metadata['sizes'][$s]['file'] = implode('-', $newfilename);
 
 					$destfilename = str_replace(basename($file), $metadata['sizes'][$s]['file'], $file);
 				} else {
 					// Must construct a name for the thumbnail
 					$destfilename = substr($file, 0, strrpos($file, '.'));
-					$destfilename .= "-{$dst_w}x{$dst_h}.jpg";
+					$destfilename .= "-{$dst_w}x{$dst_h}.{$ext}";
 				}
 
-				$resized = wp_crop_image($file, $orig_x, $orig_y, $width, $height, $dst_w, $dst_h, false, $destfilename);
+				$resized = ifp_wp_crop_image($file, $orig_x, $orig_y, $width, $height, $dst_w, $dst_h, false, $destfilename);
 
 				if ($resized) {
 					$metadata['sizes'][$s]['file'] = basename(str_replace(dirname($file), '', $resized));
