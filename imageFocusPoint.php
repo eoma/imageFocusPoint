@@ -48,7 +48,7 @@ function ifp_attachment_fields_to_edit ($actions, $post) {
 	$a['input'] = 'html';
 	$a['html'] = "<input type='text' value='" . $ifp['x'] . "' name='attachments[" . intval($post->ID) . "][image_focus_point][x]' id='image_focus_point_" .  intval($post->ID) . "_x' /><br />"
 	           . "<input type='text' value='" . $ifp['y'] . "' name='attachments[" . intval($post->ID) . "][image_focus_point][y]' id='image_focus_point_" .  intval($post->ID) . "_y' />"
-	           . "<script type='text/javascript'>ifp_set_point(" . intval($post->ID) .")</script>"
+	           . "<script type='text/javascript'>imageFocusPoint.init(" . intval($post->ID) .")</script>"
 	           . "";
 	$a['value'] = $ifp;
 
