@@ -197,6 +197,94 @@ function ifp_crop ($metadata, $id) {
 	return $metadata;
 }
 
+/**
+ * Crop an Image to a given size.
+ * Modified version of the function wp_crop_image located in
+ * wp-admin/includes/image.php
+ *
+ * Mixes in some picture detection and treatment from image_resize in
+ * wp-includes/media.php
+ *
+ * @param string|int $src_file The source file or Attachment ID.
+ * @param int $src_x The start x position to crop from.
+ * @param int $src_y The start y position to crop from.
+ * @param int $src_w The width to crop.
+ * @param int $src_h The height to crop.
+ * @param int $dst_w The destination width.
+ * @param int $dst_h The destination height.
+ * @param int $src_abs Optional. If the source crop points are absolute.
+ * @param string $dst_file Optional. The destination file to write to.
+ * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
+ */
+function ifp_wp_crop_image( $src_file, $src_x, $src_y, $src_w, $src_h, $dst_w, $dst_h, $src_abs = false, $dst_file = false ) {
+	if ( is_numeric( $src_file ) ) // Handle int as attachment ID
+		$src_file = get_attached_file( $src_file );
+
+	$src = wp_load_image( $src_file );
+
+	if ( !is_resource( $src ) )
+		return new WP_Error( 'error_loading_image', $src, $src_file );
+
+	/* Part from image_resize */
+	$size = @getimagesize( $src_file );
+	if ( !$size )
+		return new WP_Error('invalid_image', __('Could not read image size'), $file);
+	list($orig_w, $orig_h, $orig_type) = $size;
+	/* End part from image_resize */
+
+	$dst = wp_imagecreatetruecolor( $dst_w, $dst_h );
+
+	if ( $src_abs ) {
+		$src_w -= $src_x;
+		$src_h -= $src_y;
+	}
+
+	imagecopyresampled( $dst, $src, 0, 0, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h );
+
+	/* Part from image_resize */
+	// convert from full colors to index colors, like original PNG.
+	if ( (IMAGETYPE_PNG == $orig_type) && function_exists('imageistruecolor') && !imageistruecolor( $src ) )
+		imagetruecolortopalette( $dst, false, imagecolorstotal( $src ) );
+	/* End part from image_resize */
+
+	imagedestroy( $src ); // Free up memory
+
+	if ( ! $dst_file )
+		$dst_file = str_replace( basename( $src_file ), 'cropped-' . basename( $src_file ), $src_file );
+
+	$info_src = pathinfo($src_file);
+	$info_dst = pathinfo($dst_file);
+	$dir = $info_dst['dirname'];
+	$ext = $info_src['extension']; // Keep the source extension
+	$name = wp_basename($dst_file, ".{$info_dst['extension']}");
+
+	$dst_file = "{$dir}/{$name}.{$ext}";
+
+	if ( IMAGETYPE_GIF == $orig_type ) {
+		$success = imagegif($dst, $dst_file);
+	} else if ( IMAGETYPE_PNG == $orig_type ) {
+		$success = imagepng($dst, $dst_file);
+	} else {
+		$dst_file = "{$dir}/{$name}.jpg";
+		$success = imagejpeg( $dst, $dst_file, apply_filters( 'jpeg_quality', 90, 'wp_crop_image' ) );
+	}
+
+	imagedestroy($dst);
+
+	if ( $success ) {
+		/* Part from image_resize */
+		// Set correct file permissions
+		$stat = stat( dirname( $dst_file ));
+		$perms = $stat['mode'] & 0000666; //same permissions as parent folder, strip off the executable bits
+		@ chmod( $dst_file, $perms );
+		/* End part from image_resize */
+
+		return $dst_file;
+	} else {
+		return false;
+	}
+}
+
 add_action('wp_generate_attachment_metadata', 'ifp_crop', 5, 2);
 
 if ( is_admin() ) {
