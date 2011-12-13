@@ -298,13 +298,10 @@ function ifp_wp_crop_image( $src_file, $src_x, $src_y, $src_w, $src_h, $dst_w, $
 add_action('wp_generate_attachment_metadata', 'ifp_crop', 5, 2);
 
 function ifp_admin_init() {
-
-	if ( is_admin() ) {
-		add_action('attachment_fields_to_edit', 'ifp_attachment_fields_to_edit', 10, 2);
-		add_action('attachment_fields_to_save', 'ifp_attachment_fields_to_save', 10, 2);
+	add_action('attachment_fields_to_edit', 'ifp_attachment_fields_to_edit', 10, 2);
+	add_action('attachment_fields_to_save', 'ifp_attachment_fields_to_save', 10, 2);
 	
-		wp_enqueue_script('image_focus_point', plugins_url('/imageFocusPoint.js', __FILE__), array('jquery'));
-	}
+	wp_enqueue_script('image_focus_point', plugins_url('/imageFocusPoint.js', __FILE__), array('jquery'));
 }
 add_action('admin_init', 'ifp_admin_init');
 
