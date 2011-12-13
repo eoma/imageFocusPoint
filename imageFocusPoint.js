@@ -46,7 +46,7 @@ imageFocusPoint = {
 			//alert('not created');
 		
 			jQuery('#imgedit-crop-' + t.attachment_id)
-			.append("<img id='image_focus_point_poi' src='../wp-content/plugins/imageFocusPoint/poi.png' style='display:none;' height='16' width='16' />");
+			.append("<img id='image_focus_point_poi' src='" + ifp_base_url + "/poi.png' style='display:none;' height='16' width='16' />");
 
 			poi = jQuery('#image_focus_point_poi');
 			poi.css('display', 'block');
