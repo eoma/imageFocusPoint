@@ -301,7 +301,7 @@ function ifp_javascript_variables() {
 ?>
 
 <script type="text/javascript">
-	var ifp_base_url = "<?php echo plugin_dir_url( __FILE__ ) ?>";
+	var ifp_base_url = "<?php echo plugins_url() . '/' . basename(dirname(__FILE__)) . '/' ?>";
 </script>
 
 <?php
