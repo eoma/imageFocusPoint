@@ -2,8 +2,8 @@
 Contributors: eoma
 Tags: image, focus, point, picture
 Requires at least: 3.1
-Tested up to: 3.1
-Stable tag: trunk
+Tested up to: 3.3
+Stable tag: 0.1.2
 
 Image focus point is a wordpress plugin that let's
 you set a focus point in your picture.

@@ -3,7 +3,7 @@
 Plugin Name: Image Focus Point
 Plugin URI: https://github.com/eoma/imageFocusPoint
 Description: Plugin for setting focus point in a picture, makes it easy to crop at a given point
-Version: 0.1
+Version: 0.1.2
 Author: Endre Oma
 Author URI: http://endreoma.org
 License: GPL2
