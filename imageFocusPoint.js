@@ -12,6 +12,13 @@ imageFocusPoint = {
 	init : function (attachment_id) {
 		var t = this;
 
+		// Clear old values
+		t.x = null;
+		t.y = null;
+		t.poi = null;
+		t.attachment_id = null;
+		t.img = null;
+
 		t.attachment_id = attachment_id;
 		t.x = jQuery('#image_focus_point_' + t.attachment_id + '_x');
 		t.y = jQuery('#image_focus_point_' + t.attachment_id + '_y');
@@ -27,6 +34,8 @@ imageFocusPoint = {
 		t.img.live('click', function(e) {
 			t.computeRelativePoint(e);
 			t.setVisualPoint();
+			t.x.trigger('change');
+			t.y.trigger('change');
 		});
 
 		// The point should be updated when points are manually input.
@@ -42,7 +51,8 @@ imageFocusPoint = {
 		var t = this;
 		if (t.img === null || t.img.length == 0) {
 			console.log("t.img was null or zero length");
-			t.img = $('#image-preview-' + t.attachment_id);
+			t.img = $('.media-frame-content .attachment-details[data-id="' + t.attachment_id + '"] img');
+			t.img.attr('draggable', '');
 		}
 	},
 
@@ -65,8 +75,8 @@ imageFocusPoint = {
 
 		if (poi.length == 0) {
 			//alert('not created');
-		
-			jQuery('#imgedit-crop-' + t.attachment_id)
+			
+			jQuery('.media-frame-content .attachment-details[data-id="' + t.attachment_id + '"] .thumbnail')
 			.append("<img id='image_focus_point_poi' src='" + ifp_base_url + "/poi.png' style='display:none;' height='16' width='16' />");
 
 			poi = jQuery('#image_focus_point_poi');
